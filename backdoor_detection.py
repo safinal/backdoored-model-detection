@@ -13,6 +13,16 @@ from utils import fix_seed
 
 
 def backdoor_model_detector(model, num_classes, test_images_folder_address, transformation):
+    """
+    Args:
+        model: A PreActResNet18 model trained on an image-classification dataset
+        num_classes: The number of classes the image-classification dataset contains
+        test_images_folder_address: Path to a folder containing clean test images.
+        transformation: The transformation applied to test images before feeding them to the model
+
+    Returns:
+        int: 1 if the input model is detected as a backdoored model, 0 otherwise.
+    """
     fix_seed(config.seed)
     model = model.to(config.device)
     model.eval()
