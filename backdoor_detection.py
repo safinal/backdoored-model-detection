@@ -2,7 +2,6 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 import os
-import random
 import math
 from scipy.stats import expon
 from PIL import Image
