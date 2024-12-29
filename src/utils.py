@@ -34,5 +34,5 @@ def threshold_scanning(scores, labels):
         else:
             acc = np.sum((np.array(scores) < th) == np.array(labels)) / len(labels)
         if acc == acc_max:
-            good_thresholds.append(acc)
+            good_thresholds.append(float(th))
     return good_thresholds

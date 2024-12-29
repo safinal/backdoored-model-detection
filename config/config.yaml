@@ -1,0 +1,11 @@
+seed: 0
+img_resize: 128
+device: "cuda"
+num_steps: 100
+batch_size: 30
+initial_lr: 0.1
+final_lr: 0.001
+warmup_steps: 10
+dataset_path: "./eval_dataset"
+verbose: True
+results_path: "./results.json"

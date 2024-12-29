@@ -7,9 +7,8 @@ from scipy.stats import expon
 from PIL import Image
 from torchvision import transforms
 
-import config
-from utils import fix_seed
-
+from src.config import ConfigManager
+from src.utils import fix_seed
 
 
 def backdoor_model_detector(model, num_classes, test_images_folder_address, transformation):
@@ -23,32 +22,32 @@ def backdoor_model_detector(model, num_classes, test_images_folder_address, tran
     Returns:
         int: 1 if the input model is detected as a backdoored model, 0 otherwise.
     """
-    fix_seed(config.seed)
-    model = model.to(config.device)
+    fix_seed(ConfigManager().get("seed"))
+    model = model.to(ConfigManager().get("device"))
     model.eval()
 
-    transformation.transforms = [transforms.Resize((config.img_resize, config.img_resize)) if isinstance(t, transforms.Resize) else t for t in transformation.transforms]
+    transformation.transforms = [transforms.Resize((ConfigManager().get("img_resize"), ConfigManager().get("img_resize"))) if isinstance(t, transforms.Resize) else t for t in transformation.transforms]
     img_names = os.listdir(test_images_folder_address)
         
 
     def lr_scheduler(iter_idx):
-        initial_lr = config.initial_lr
-        final_lr = config.final_lr
-        warmup_steps = config.warmup_steps
+        initial_lr = ConfigManager().get("initial_lr")
+        final_lr = ConfigManager().get("final_lr")
+        warmup_steps = ConfigManager().get("warmup_steps")
         
         if iter_idx < warmup_steps:
             return initial_lr * (iter_idx + 1) / warmup_steps
         else:
             return final_lr + 0.5 * (initial_lr - final_lr) * \
-                (1 + math.cos((iter_idx - warmup_steps)/(config.num_steps - warmup_steps) * math.pi))
+                (1 + math.cos((iter_idx - warmup_steps)/(ConfigManager().get("num_steps") - warmup_steps) * math.pi))
     
     res = []
 
     for t in range(num_classes):
-        if len(img_names) >= config.batch_size:
-            images = torch.concat([transformation(Image.open(os.path.join(test_images_folder_address, img_name)).convert("RGB")).unsqueeze(0) for img_name in np.random.choice(img_names, size=config.batch_size, replace=False)]).to(config.device)
+        if len(img_names) >= ConfigManager().get("batch_size"):
+            images = torch.concat([transformation(Image.open(os.path.join(test_images_folder_address, img_name)).convert("RGB")).unsqueeze(0) for img_name in np.random.choice(img_names, size=ConfigManager().get("batch_size"), replace=False)]).to(ConfigManager().get("device"))
         else:
-            images = torch.concat([transformation(Image.open(os.path.join(test_images_folder_address, img_name)).convert("RGB")).unsqueeze(0) for img_name in np.random.choice(img_names, size=config.batch_size, replace=True)]).to(config.device)
+            images = torch.concat([transformation(Image.open(os.path.join(test_images_folder_address, img_name)).convert("RGB")).unsqueeze(0) for img_name in np.random.choice(img_names, size=ConfigManager().get("batch_size"), replace=True)]).to(ConfigManager().get("device"))
         with torch.no_grad():
             x = model.conv1(images)
             x = model.layer1[0](x)
@@ -57,9 +56,9 @@ def backdoor_model_detector(model, num_classes, test_images_folder_address, tran
         activations.requires_grad_()
 
         last_loss = 1000
-        labels = t * torch.ones((len(activations),), dtype=torch.long).to(config.device)
+        labels = t * torch.ones((len(activations),), dtype=torch.long).to(ConfigManager().get("device"))
         onehot_label = F.one_hot(labels, num_classes=num_classes)
-        for iter_idx in range(config.num_steps):
+        for iter_idx in range(ConfigManager().get("num_steps")):
             optimizer = torch.optim.AdamW([activations], lr=lr_scheduler(iter_idx))
             optimizer.zero_grad()
             outputs = model.linear(
