@@ -20,7 +20,7 @@ def backdoor_model_detector(model, num_classes, test_images_folder_address, tran
         transformation: The transformation applied to test images before feeding them to the model
 
     Returns:
-        int: 1 if the input model is detected as a backdoored model, 0 otherwise.
+        int: 0 if the input model is detected as a backdoored model, 1 otherwise.
     """
     fix_seed(ConfigManager().get("seed"))
     model = model.to(ConfigManager().get("device"))
@@ -100,5 +100,5 @@ def backdoor_model_detector(model, num_classes, test_images_folder_address, tran
 
     loc, scale = expon.fit(r_null)
     p_value = 1 - pow(expon.cdf(r_eval, loc=loc, scale=scale), len(r_null) + 1)
-    return p_value
-    # return 1 if p_value < 0.08 else 0
+    # return p_value
+    return 1 if p_value < 0.08 else 0
