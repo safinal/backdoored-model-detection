@@ -71,7 +71,7 @@ For each class in the dataset:
 
 ## 🏆 Results
 
-Our solution for this Challenge achieved outstanding results. The evaluation metric for this challenge is **Accuracy**, with models tested on a private test dataset. Our model achieved the **second highest score**.
+Our solution for this Challenge achieved outstanding results. The evaluation metric for this challenge is **Accuracy**, with submissions tested on a private test dataset. Our method achieved the **second highest score**.
 
 The table below presents a summary of the Top 🔟 teams and their respective accuracy scores:
 
