@@ -1,5 +1,4 @@
 # ⭐️ Backdoored Model Detection
-*Contributors: [Ali Nafisi](https://safinal.github.io/)*
 
 [![pytorch](https://img.shields.io/badge/PyTorch-2.5.1-EE4C2C.svg?style=flat&logo=pytorch)](https://pytorch.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -77,14 +76,16 @@ The table below presents a summary of the Top 🔟 teams and their respective ac
 
 | **Rank** | **Team**                             | **Accuracy (%)** |
 |----------|--------------------------------------|------------------|
-|🥇        | AUTs                                 | 81            |
+|🥇        | AUTs                                 | 79            |
 |🥈        | **No Trust Issues Here (Our Team)**  | **78**        |
-|🥉        | Persistence                          | 78            |
+|🥉        | Persistence                          | 74            |
 | 4        | AI Guardians of Trust                | 72            |
-| 5        | AIUoK                                | 71            |
+| 5        | AIUoK                                | 70            |
 | 6        | Pileh                                | 67            |
-| 7        | red_serotonin                        | 67            |
-| 8        | GGWP                                 | 67            |
+| 7        | My Team                              | 66            |
+| 8        | Unknown                              | 66            |
+| 9        | red_serotonin                        | 65            |
+| 10       | DevNull                              | 65            |
 
 
 ## 🏃🏻‍♂️‍➡️ Steps to Set Up and Run
