@@ -52,7 +52,7 @@ We attempt to expose latent triggers by optimizing activation patterns to maximi
 We employ a statistical anomaly test to distinguish between clean and poisoned models.
 * **Hypothesis:** Clean models exhibit balanced confidence across classes, whereas backdoored models display unusually high maximal confidence for a specific target class.
 * **Distribution Fitting:** We fit the maximal confidence scores (excluding the highest one) to an **exponential distribution**, which provided the best separation in our experiments.
-* **Decision Rule:** We treat the maximum score as a candidate outlier and calculate its p-value. If the **p-value is below 0.08**, the model is classified as **backdoored (`0`)**; otherwise, it is classified as **clean (`1`)**.
+* **Decision Rule:** We treat the maximum score as a candidate outlier and calculate its p-value. If the **p-value is below 0.08**, the model is classified as **backdoored**; otherwise, it is classified as **clean**.
 
 ## 🏆 Results
 
