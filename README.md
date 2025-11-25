@@ -39,34 +39,20 @@ For more details, check the `problem_description.pdf` file.
 
 
 ## 🧠 Our Approach
-Our approach leverages **activation-based optimization** and **statistical anomaly detection** to identify whether a given image classification model contains a backdoor. Here’s an overview of the method:
+Our solution extends the **Mm-Bd** method by introducing feature-space optimization, improved initialization, image resizing, and a refined statistical detection rule. We address the challenge of detecting backdoors without prior knowledge of the attack type or trigger structure by reverse-engineering the model's sensitivity in the feature space.
 
-### 1. **Activation Inversion Optimization**
+### 1. Activation Perturbation Optimization
+We attempt to expose latent triggers by optimizing activation patterns to maximize class confidence.
+* **Initialization:** We sample clean images from the verification set and resize them to $128\times128$, as this resolution consistently improves accuracy.
+* **Feature Extraction:** Inputs are passed through the model up to `model.layer1[0]` to produce an initial feature tensor. We found that initializing from real features yields better results than random initialization.
+* **Optimization:** We freeze deeper layers and treat the extracted activations as trainable variables. We optimize these activations to maximize the model's confidence for a target class.
+* **Scoring:** We compute a maximal confidence score for each class, penalized by the activation magnitudes of other classes to ensure specificity.
 
-For each class in the dataset:
-
-- We select a random batch of clean images and pass them through the first convolutional and residual layers of the model to obtain activations.
-- Then, treating these activations as trainable variables, we **optimize them** (using the model’s latter layers held fixed) so that the final output is maximally confident towards a *chosen target class*.
-- The process simulates searching for possible hidden triggers in the model’s representation that could elicit a strong, suspiciously focused output for any class.
-
-### 2. **Maximal Confidence Statistic**
-
-- For each class, we compute a **maximal confidence score**:  
-  The model's maximum output (for the target class) after the activation inversion process, penalized for high outputs in other classes.
-- This yields a **vector of scores**, one per class.
-
-### 3. **Statistical Outlier Detection**
-
-- If the model is clean, these maximal confidence values are usually balanced across all classes.
-- A backdoored model, however, often contains one class whose maximal confidence is an **outlier** (because the backdoor trigger creates unusually high confidence for the target class).
-- We fit an **exponential distribution** to the scores *excluding* the maximum. We then calculate the **p-value** of the actual maximum under this distribution to measure how extreme it is.
-- If this p-value is below a set threshold (e.g., 0.08), the model is flagged as containing a backdoor.
-
-### 4. **Key Features**
-
-- **No dependence on knowledge of the specific trigger or attack type.**
-- **Relies only on a small set of clean images and the model**—aligned with problem constraints.
-- **Principled statistical decision**: robust against noise and overfitting.
+### 2. Statistical Outlier Detection
+We employ a statistical anomaly test to distinguish between clean and poisoned models.
+* **Hypothesis:** Clean models exhibit balanced confidence across classes, whereas backdoored models display unusually high maximal confidence for a specific target class.
+* **Distribution Fitting:** We fit the maximal confidence scores (excluding the highest one) to an **exponential distribution**, which provided the best separation in our experiments.
+* **Decision Rule:** We treat the maximum score as a candidate outlier and calculate its p-value. If the **p-value is below 0.08**, the model is classified as **backdoored (`0`)**; otherwise, it is classified as **clean (`1`)**.
 
 ## 🏆 Results
 
